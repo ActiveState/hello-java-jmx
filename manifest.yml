@@ -1,5 +1,17 @@
 ---
-applications: 
+applications:
 - name: hello-java
-  mem: 512M
-  path: target/hello-java-1.0.war
+  mem: 1024
+  path: target/hello-java-jmx-1.0.war
+  services:
+    ${name}-jmx:
+      type: harbor
+  #env:
+    #CATALINA_OPS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false
+  stackato:
+    hooks:
+      pre-running:
+      - export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=4000 -Dcom.sun.management.jmxremote.rmi.port=4000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+      - printenv
+      #- wget -O ~/.java-buildpack/tomcat/lib/catalina-jmx-remote.jar http://apache.mirror.iweb.ca/tomcat/tomcat-7/v7.0.57/bin/extras/catalina-jmx-remote.jar
+      #- sed -i '21 a\ <Listener className="org.apache.catalina.mbeans.JmxRemoteLifecycleListener" rmiRegistryPortPlatform="4000" rmiServerPortPlatform="4001" />' ~/.java-buildpack/tomcat/conf/server.xml
